@@ -1,14 +1,24 @@
-/* groovylint-disable CompileStatic */
+def gv
+
 pipeline {
     agent any
     parameters {
-        choice(name: 'Version', choices: ['1.1.0','1.1.1','1.0.1'], description: 'Choose version')
+        choice(name: 'Version', choices:['1.1.0', '1.1.1', '1.0.1'], description: 'Choose version')
         booleanParam(name: 'executeTests', defaultValue: true, description: 'Yes')
     }
     stages {
+        stage('init') {
+            steps {
+                script {
+                    gv = load "script.groovy"
+                }
+            }
+        }
         stage('build') {
             steps {
-                echo 'Building the application'
+                script {
+                    gv.buildApp()
+                }
             }
         }
         stage('test') {
@@ -18,13 +28,17 @@ pipeline {
                 }
             }
             steps {
-                echo 'Testing the application'
+                script {
+                    gv.testApp()
+                }
             }
         }
         stage('deploy') {
             steps {
-                echo 'Deploying the application'
-                echo "Deploying version${params.Version}"
+                script {
+                    gv.deployApp()
+                }
+                
             }
         }
     }
