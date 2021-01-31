@@ -1,9 +1,10 @@
 /* groovylint-disable CompileStatic */
 pipeline {
     agent any
-   // environment {
-        //SERVER_CREDENTIALS = credentials('github-username')
-   // }
+    parameters {
+        choice(name: 'Version', choices: ['1.1.0','1.1.1','1.0.1'], description: 'Choose version')
+        booleanParam(name: 'executeTests', defaultValue: true, description: 'Yes')
+    }
     stages {
         stage('build') {
             steps {
@@ -11,6 +12,11 @@ pipeline {
             }
         }
         stage('test') {
+            when {
+                expression {
+                    params.executeTests
+                }
+            }
             steps {
                 echo 'Testing the application'
             }
@@ -18,12 +24,7 @@ pipeline {
         stage('deploy') {
             steps {
                 echo 'Deploying the application'
-                withCredentials([
-                    usernamePassword(credentials: 'github-username', usernameVariable: USER, passwordVariable: PWD )
-                ]) {
-                    echo "Username: ${USER} Password: ${PWD}"
-                }
-                echo "Deploying app with ${SERVER_CREDENTIALS}"
+                echo "Deploying version${params.VERSION}"
             }
         }
     }
