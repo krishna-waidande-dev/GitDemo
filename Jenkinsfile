@@ -1,9 +1,9 @@
 /* groovylint-disable CompileStatic */
 pipeline {
     agent any
-    environment {
+   // environment {
         //SERVER_CREDENTIALS = credentials('github-username')
-    }
+   // }
     stages {
         stage('build') {
             steps {
